@@ -2,3 +2,9 @@
 *.atsuo
 *.xml
 *.cproj
+*.mk
+Cell1/Debug/Makefile
+Cell2/Debug/Makefile
+Cell3/Debug/Makefile
+Main/Debug/Makefile
+Buck_Converter/Debug/Makefile

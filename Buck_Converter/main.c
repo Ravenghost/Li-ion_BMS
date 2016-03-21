@@ -7,9 +7,9 @@
 
 #define ENABLE 1
 #define DISABLE 0
-#define CV_U
-#define CC_I
-#define CutOff_I
+#define CV_U 1
+#define CC_I 1
+#define CutOff_I 1
 
 uint16_t adcReadings_U;
 uint16_t adcReadings_I;
@@ -49,12 +49,12 @@ ISR(TIMER0_COMPA_vect)
 	//CV mode
 	else //if (adcReadings_All >= CV_U)
 	{
-		if (adcReadings_U < CV_U & adcReadings_I > CutOff_I)
+		if ((adcReadings_U < CV_U) & (adcReadings_I > CutOff_I))
 		{
 			//Increase duty cycle
 			OCR2B++;
 		}
-		else if (adcReadings_U > CV_U & adcReadings_I > CutOff_I)
+		else if ((adcReadings_U > CV_U) & (adcReadings_I > CutOff_I))
 		{
 			//Decrease duty cycle
 			OCR2B--;
