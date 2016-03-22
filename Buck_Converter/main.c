@@ -49,12 +49,12 @@ ISR(TIMER0_COMPA_vect)
 	//CV mode
 	else //if (adcReadings_All >= CV_U)
 	{
-		if ((adcReadings_U < CV_U) & (adcReadings_I > CutOff_I))
+		if ((adcReadings_U < CV_U) && (adcReadings_I > CutOff_I))
 		{
 			//Increase duty cycle
 			OCR2B++;
 		}
-		else if ((adcReadings_U > CV_U) & (adcReadings_I > CutOff_I))
+		else if ((adcReadings_U > CV_U) && (adcReadings_I > CutOff_I))
 		{
 			//Decrease duty cycle
 			OCR2B--;

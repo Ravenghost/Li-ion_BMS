@@ -1,8 +1,8 @@
 #include <avr/io.h>
 
-uint16_t adcReadings[]
 uint8_t cellNumber;
-uint8_t balanceByte;
+uint16_t adcReadings[cellNumber]
+uint8_t balanceByte[cellNumber];
 
 void balance(void)
 {

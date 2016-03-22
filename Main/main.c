@@ -1,5 +1,5 @@
 #ifndef F_CPU
-#define F_CPU 1000000UL
+#define F_CPU 16000000UL
 #endif
 
 #include <avr/io.h>
@@ -15,7 +15,7 @@
 #define CELL2 0x4
 #define CELL3 0x6
 
-#define UART_BAUD_RATE 4800
+#define UART_BAUD_RATE 9600
 
 uint16_t adcReadings[3];
 char adcDisplay[4];
