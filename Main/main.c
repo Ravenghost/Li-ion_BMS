@@ -18,7 +18,8 @@ char adcDisplay[4];
 
 float adcConvert(uint16_t Readings);
 
-int main(void){
+int main(void)
+{
 	uart_init(UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU));
 	i2c_init();
 	sei();
@@ -72,6 +73,7 @@ int main(void){
 float adcConvert(uint16_t Readings)
 {
 	float Result;
+	//Convert 10bit adc value to voltage
 	Result = (1.1*1023)/Readings;
 	return Result;
 }
