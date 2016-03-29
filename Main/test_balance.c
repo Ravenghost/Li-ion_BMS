@@ -4,7 +4,6 @@
 
 uint8_t cellNumber;
 uint16_t adcReadings[cellNumber_MAX];
-uint8_t balanceByte[cellNumber_MAX];
 
 void cell_balance(void);
 void array_reset(void);
@@ -12,7 +11,9 @@ void cellNumber_count(void);
 
 void cell_balance(void)
 {
-	array_reset();
+	uint8_t balanceByte[cellNumber_MAX] = {0};
+	uint8_t c = cellAddress_MIN;
+	
 	for (uint8_t c1 = 0; c1 < cellNumber; c1++)
 	{
 		//Cycle compares c1[0...cellNumber] cells to c2[c1+1...cellNumber] cells voltage
@@ -30,7 +31,6 @@ void cell_balance(void)
 			}
 		}
 	}
-	uint8_t c = cellAddress_MIN;
 	//Write balance bytes to cells
 	for (uint8_t x = 0; x < cellNumber; x++)
 	{
@@ -46,30 +46,9 @@ void cell_balance(void)
 void cellNumber_count(void)
 {
 	cellNumber = 0;
+	//Count connected cells by checking if sending cell address returns 0(acknowledge)
 	for (uint8_t x = 0; x < cellAddress_MAX; x+=2)
 	{
 		if (i2c_start(x) == 0) cellNumber++;
-	}
-}
-
-
-/*void array_reset(void)
-{
-	uint16_t *array_p;
-	array_p = balanceByte;
-
-	for (uint8_t x = 0; x < sizeof(balanceByte); x++)
-	{
-		*array_p = 0;
-		*array_p++;
-	}
-}
-*/
-void array_reset(void)
-{
-	//Fill balanceByte array with 0
-	for (uint8_t x = 0; x < sizeof(balanceByte); x++)
-	{
-		balanceByte[x] = 0;
 	}
 }
