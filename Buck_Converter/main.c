@@ -11,8 +11,8 @@
 #define CC_I 1
 #define CutOff_I 1
 
-uint16_t adcReadings_U;
-uint16_t adcReadings_I;
+volatile uint16_t adcReadings_U;
+volatile uint16_t adcReadings_I;
 uint16_t adcReadings_All;
 
 void BuckIrt_init(void);
