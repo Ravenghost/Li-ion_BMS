@@ -7,7 +7,7 @@
 #include <avr/interrupt.h>
 #include <stdlib.h>
 
-#include "I2C_master.h"
+#include "i2c_master.h"
 #include "uart.h"
 #include "Cells.h"
 

@@ -5,8 +5,8 @@
 
 ISR(ADC_vect)
 {
-  txbuffer[0xA] = ADCL;
-  txbuffer[0xB] = ADCH;
+  txbuffer[0x00] = ADCL;
+  txbuffer[0x01] = ADCH;
   adc_start();
 }
 
