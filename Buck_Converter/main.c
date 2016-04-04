@@ -137,6 +137,8 @@ void adc_start(void)
 
 void PWM_init(void)
 {
+	//Set OC2B pin as output
+	DDRD |= (1<<DDD3);
 	//Set operation mode = Fast PWM non-inverting, PWM pin = OC2B
 	TCCR2A |= (1<<COM2B1)|(1<<WGM21)|(1<<WGM20);
 	TCCR2B |= (1<<WGM22);
