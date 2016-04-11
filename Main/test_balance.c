@@ -22,12 +22,12 @@ void cell_balance(void)
 			if (adcReadings[c1] > adcReadings[c2])
 			{
 				//Set balance byte if cell voltage c1 is higher than c2 and cellBalance threshold
-				if ((adcReadings[c1] - adcReadings[c2]) > cellBalance) balanceByte[c1] = 0xFF;
+				if ((adcReadings[c1] - adcReadings[c2]) > cellBalance) balanceByte[c2] = 0xBB;
 			}
 			else
 			{
 				//Set balance byte if cell voltage c2 is higher than c1 and cellBalance threshold
-				if ((adcReadings[c2] - adcReadings[c1]) > cellBalance) balanceByte[c2] = 0xFF;
+				if ((adcReadings[c2] - adcReadings[c1]) > cellBalance) balanceByte[c1] = 0xBB;
 			}
 		}
 	}
