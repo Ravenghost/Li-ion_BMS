@@ -22,13 +22,7 @@ int main(void)
 	
 	while (1)
 	{
-		if (rxbuffer[cellMemory_balance] == 0xBB)
-		{
-			PORTB |= (1<<PORTB0);
-		}
-		else
-		{
-			PORTB &= ~(1<<PORTB0);
-		}
+		if (rxbuffer[cellMemory_balance] == 0xBB) PORTB |= (1<<PORTB0);
+		else PORTB &= ~(1<<PORTB0);
 	}
 }
