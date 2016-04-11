@@ -12,8 +12,8 @@
 int main(void)
 {
 	//Change system clock prescaler = 2
-	CLKPR |= (1<<CLKPCE);
-	CLKPR |= (1<<CLKPS0);
+	CLKPR = (1<<CLKPCE);
+	CLKPR = (1<<CLKPS0);
 	//Balance pin
 	DDRB |= (1<<DDB0);
 	adc_init();
@@ -22,7 +22,7 @@ int main(void)
 	
 	while (1)
 	{
-		if (rxbuffer[0x00] == 0xFF)
+		if (rxbuffer[cellMemory_balance] == 0xBB)
 		{
 			PORTB |= (1<<PORTB0);
 		}

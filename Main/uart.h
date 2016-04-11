@@ -98,7 +98,7 @@ extern void uart_putc(uint8_t data);
   
    Input = s string to be transmitted
  */
-extern void uart_puts(const int8_t *s);
+extern void uart_puts(const char *s);
 
 
 /*
@@ -111,7 +111,7 @@ extern void uart_puts(const int8_t *s);
    Input = s program memory string to be transmitted
    see      uart_puts_P
  */
-extern void uart_puts_p(const int8_t *s);
+extern void uart_puts_p(const char *s);
 
 /*
    Macro to automatically put a string constant into program memory

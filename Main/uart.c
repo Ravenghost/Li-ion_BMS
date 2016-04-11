@@ -9,8 +9,8 @@
  */
 
 // size of RX/TX buffers
-#define UART_RX_BUFFER_MASK(UART_RX_BUFFER_SIZE - 1)
-#define UART_TX_BUFFER_MASK(UART_TX_BUFFER_SIZE - 1)
+#define UART_RX_BUFFER_MASK (UART_RX_BUFFER_SIZE - 1)
+#define UART_TX_BUFFER_MASK (UART_TX_BUFFER_SIZE - 1)
 
 #define UART0_RECEIVE_INTERRUPT   USART_RX_vect
 #define UART0_TRANSMIT_INTERRUPT  USART_UDRE_vect
@@ -214,7 +214,7 @@ void uart_putc(uint8_t data)
    Transmit string to UART
    Input = string to be transmitted
 */
-void uart_puts(const int8_t *s)
+void uart_puts(const char *s)
 {
     while (*s) uart_putc(*s++);
 
@@ -225,9 +225,9 @@ void uart_puts(const int8_t *s)
    Transmit string from program memory to UART
    Input = program memory string to be transmitted
 */
-void uart_puts_p(const int8_t *progmem_s)
+void uart_puts_p(const char *progmem_s)
 {
-    register int8_t c;
+    register char c;
     
     while ( (c = pgm_read_byte(progmem_s++)) ) uart_putc(c);
 
