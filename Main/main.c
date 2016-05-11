@@ -20,7 +20,7 @@ char adcDisplay[4];
 void cellNumber_count(void);
 void cell_adcReadings(void);
 void cell_balance(void);
-float adcConvert(uint16_t Readings);
+float adcConvert(uint16_t readings);
 
 int main(void)
 {
@@ -59,7 +59,11 @@ void cellNumber_count(void)
 	//Count connected cells by checking if sending cell address returns 0(acknowledge)
 	for (uint8_t x = 0; x < cellAddress_MAX; x+=2)
 	{
-		if (i2c_start(x) == 0) cellNumber++;
+		if (i2c_start(x) == 0)
+		{
+			cellNumber++;
+			i2c_stop();
+		}
 	}
 }
 
@@ -94,13 +98,13 @@ void cell_balance(void)
 		{
 			if (adcReadings[c1] > adcReadings[c2])
 			{
-				//Set balance byte for c2(adc incrementation ivnerted) if cell voltage c1 is higher than c2 and cellBalance threshold
-				if ((adcReadings[c1] - adcReadings[c2]) > cellBalance) balanceByte[c2] = 0xBB;
+				//Set balance byte for c2(adc incrementation inverted) if cell voltage c1 is higher than c2 and cellBalance_TH threshold
+				if ((adcReadings[c1] - adcReadings[c2]) > cellBalance_TH) balanceByte[c2] = 0xBB;
 			}
 			else
 			{
-				//Set balance byte for c1(adc incrementation ivnerted) if cell voltage c2 is higher than c1 and cellBalance threshold
-				if ((adcReadings[c2] - adcReadings[c1]) > cellBalance) balanceByte[c1] = 0xBB;
+				//Set balance byte for c1(adc incrementation inverted) if cell voltage c2 is higher than c1 and cellBalance_TH threshold
+				if ((adcReadings[c2] - adcReadings[c1]) > cellBalance_TH) balanceByte[c1] = 0xBB;
 			}
 		}
 	}
@@ -116,10 +120,10 @@ void cell_balance(void)
 	}
 }
 
-float adcConvert(uint16_t Readings)
+float adcConvert(uint16_t readings)
 {
-	float Result;
+	float result;
 	//Convert 10bit adc value to voltage
-	Result = (1.1*1023)/Readings;
-	return Result;
+	result = (1.1*1024)/readings;
+	return result;
 }
