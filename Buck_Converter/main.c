@@ -10,25 +10,27 @@
 #define CV_U 1
 #define CC_I 1
 #define CutOff_I 1
+#define START 1
+#define STOP 0
 
 volatile uint16_t adcReadings_U;
 volatile uint16_t adcReadings_I;
 uint16_t adcReadings_All;
 
 void BuckIrt_init(void);
-void BuckIrt(uint8_t State);
-void adc_init(void);
-void adc_start(void);
+void BuckIrt(uint8_t state);
+void adcBuck_init(void);
+void adcBuck(uint8_t state);
 void PWM_init(void);
-void PWM(uint8_t State);
+void PWM(uint8_t state);
 
 int main(void)
 {
 	BuckIrt_init();
-	adc_init();
+	adcBuck_init();
 	PWM_init();
 	BuckIrt(ENABLE);
-	adc_start();
+	adcBuck(START);
 	sei();
 	while (1)
 	{
@@ -89,7 +91,7 @@ ISR(ADC_vect)
 	}
 	//Change from ADC channel 0 to 1
 	ADMUX ^= (1<<MUX0);
-	adc_start();
+	adcBuck();
 }
 
 void BuckIrt_init(void)
@@ -100,9 +102,9 @@ void BuckIrt_init(void)
 	OCR0A = 249;
 }
 
-void BuckIrt(uint8_t State)
+void BuckIrt(uint8_t state)
 {
-	if (State == ENABLE)
+	if (state == ENABLE)
 	{
 		//Reset counter value
 		TCNT0 = 0x00;
@@ -120,7 +122,7 @@ void BuckIrt(uint8_t State)
 	}
 }
 
-void adc_init(void)
+void adcBuck_init(void)
 {
 	//AVcc reference, ADC0 channel
 	ADMUX |= (1<<REFS0);
@@ -128,11 +130,11 @@ void adc_init(void)
 	ADCSRA |= (1<<ADEN)|(1<<ADIE)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);
 }
 
-
-void adc_start(void)
+void adcBuck(uint8_t state)
 {
 	//ADC start conversion
-	ADCSRA |=(1<<ADSC);
+	if (state = START) ADCSRA |= (1<<ADSC);
+	else ADCSRA &= ~(1<<ADSC);
 }
 
 void PWM_init(void)
@@ -148,9 +150,9 @@ void PWM_init(void)
 	OCR2B = 0;
 }
 
-void PWM(uint8_t State)
+void PWM(uint8_t state)
 {
-	if (State == ENABLE)
+	if (state == ENABLE)
 	{
 		//Reset counter value
 		TCNT2 = 0x00;

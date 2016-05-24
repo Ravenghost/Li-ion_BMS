@@ -23,6 +23,7 @@ uint8_t balanceByte[cellNumber_MAX];
 volatile uint16_t adcReadings_I;
 uint8_t charger;
 
+void uart_out(void);
 float adcConvert(uint16_t readings, uint8_t mode);
 
 int main(void)
