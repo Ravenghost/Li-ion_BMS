@@ -6,48 +6,49 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "i2c_master.h"
 #include "uart.h"
 #include "Cells.h"
+#include "buck.h"
 
-#define UART_BAUD_RATE 4800
+#define UART_BAUD_RATE 9600
+
+#define cellReading 1
+#define mainReading 0
 
 uint8_t cellNumber;
+uint8_t balanceByte[cellNumber_MAX];
 uint16_t adcReadings[cellNumber_MAX];
-char adcDisplay[4];
+volatile float adcReadingsMean;
+volatile uint16_t adcReadings_I;
+uint8_t charger;
 
 void cellNumber_count(void);
 void cell_adcReadings(void);
 void cell_balance(void);
-float adcConvert(uint16_t readings);
+void uart_out(void);
+float adcConvert(uint16_t readings, uint8_t state);
+void mean_readings(void);
 
 int main(void)
 {
 	uart_init(UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU));
 	i2c_init();
+	BuckIrt_init()
+	adcBuck_init();
 	sei();
-	//_delay_ms(10);
 
 	while(1)
 	{
 		cellNumber_count();
 		cell_adcReadings();
 		cell_balance();
-	
-		uart_putc(0xC);
-		uart_puts("Cele Itampa\r");
-		uart_puts("1    ");
-		uart_puts(dtostrf(adcConvert(adcReadings[0]), 4, 2, adcDisplay));
-		uart_puts(" V\r");
-		uart_puts("2    ");
-		uart_puts(dtostrf(adcConvert(adcReadings[1]), 4, 2, adcDisplay));
-		uart_puts(" V\r");
-		uart_puts("3    ");
-		uart_puts(dtostrf(adcConvert(adcReadings[2]), 4, 2, adcDisplay));
-		uart_puts(" V");
-		_delay_ms(500);
+		uart_out();
 		
+		BuckIrt(ENABLE);
+		adcBuck(START);
 	}
 	
 	return 0;
@@ -88,7 +89,8 @@ void cell_adcReadings(void)
 
 void cell_balance(void)
 {
-	uint8_t balanceByte[cellNumber_MAX] = {0};
+	//Clearing balanceByte array to form a new one filled with correct bytes
+	memset(balanceByte, 0, cellNumber_MAX);	
 	uint8_t c = cellAddress_MIN;
 	
 	for (uint8_t c1 = 0; c1 < cellNumber; c1++)
@@ -120,10 +122,41 @@ void cell_balance(void)
 	}
 }
 
-float adcConvert(uint16_t readings)
+void uart_out(void)
+{
+	char adcDisplay[4];
+	char cellDisplay;
+	//Outputs BMS information and measurements to computer
+	uart_puts("Start");
+	uart_putc('\n');
+	uart_putc(*utoa(cellNumber, &cellDisplay, 10));
+	uart_putc('\n');
+	for (uint8_t x = 0; x < cellNumber; x++)
+	{
+		uart_puts(dtostrf(adcConvert(adcReadings[x], cellReading), 4, 2, adcDisplay));
+		uart_putc('\n');
+		uart_putc(*utoa(balanceByte[x], &cellDisplay, 10));
+		uart_putc('\n');
+	}
+	uart_puts(dtostrf(adcConvert(adcReadings_I, mainReading), 4, 2, adcDisplay));
+	uart_putc('\n');
+	uart_putc(*utoa(charger, &cellDisplay, 10));
+	uart_putc('\n');
+}
+
+float adcConvert(uint16_t readings, uint8_t state)
 {
 	float result;
-	//Convert 10bit adc value to voltage
-	result = (1.1*1024)/readings;
+	//Convert 10bit adc value to voltage, current
+	if (state == cellReading) result = (1.1*1024)/readings;
+	else result = (readings*1024)/5;
 	return result;
+}
+
+void mean_readings(void)
+{
+	//Calculate mean of cell adc readings
+	float temp;
+	for (uint8_t x = 0; x < cellNumber; x++) temp += adcConvert(adcReadings[x], cellReading);
+	adcReadingsMean = temp / cellNumber;
 }
