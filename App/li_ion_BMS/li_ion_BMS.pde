@@ -5,8 +5,7 @@ import static javax.swing.JOptionPane.*;
 *****************************************/
   String dataBuffer;
   int index;
-  int v_index;
-  int b_index;
+  int s_index;
   int cellNumber;
   String[] cellVoltage = new String[10];
   String[] cellBalance = new String[10];
@@ -104,8 +103,7 @@ void setup() {
   }
   //Initializing variables
   index = 0;
-  v_index = 0;
-  b_index = 0;
+  s_index = 0;
   cellNumber = 0;
   packCurrent = "0";
   charger = "0";
@@ -118,6 +116,36 @@ void setup() {
 }
  
 void draw() {
+ /*****************************************
+               Test
+  *****************************************
+    cellNumber = int(random(0, 11));
+    //cellNumber = 5;
+    charger = int(random(0, 2));
+    packCurrent = nf(random(0, 0.5), 1, 2).replace(',', '.');
+    cellVoltage[0] = nf(random(3.0, 4.2), 1, 2).replace(',', '.');
+    cellVoltage[1] = nf(random(3.0, 4.2), 1, 2).replace(',', '.');
+    cellVoltage[2] = nf(random(3.0, 4.2), 1, 2).replace(',', '.');
+    cellVoltage[3] = nf(random(3.0, 4.2), 1, 2).replace(',', '.');
+    cellVoltage[4] = nf(random(3.0, 4.2), 1, 2).replace(',', '.');
+    cellVoltage[5] = nf(random(3.0, 4.2), 1, 2).replace(',', '.');
+    cellVoltage[6] = nf(random(3.0, 4.2), 1, 2).replace(',', '.');
+    cellVoltage[7] = nf(random(3.0, 4.2), 1, 2).replace(',', '.');
+    cellVoltage[8] = nf(random(3.0, 4.2), 1, 2).replace(',', '.');
+    cellVoltage[9] = nf(random(3.0, 4.2), 1, 2).replace(',', '.');
+    
+    cellBalance[0] = int(random(0, 2));
+    cellBalance[1] = int(random(0, 2));
+    cellBalance[2] = int(random(0, 2));
+    cellBalance[3] = int(random(0, 2));
+    cellBalance[4] = int(random(0, 2));
+    cellBalance[5] = int(random(0, 2));
+    cellBalance[6] = int(random(0, 2));
+    cellBalance[7] = int(random(0, 2));
+    cellBalance[8] = int(random(0, 2));
+    cellBalance[9] = int(random(0, 2));
+    
+ *****************************************/
  noLoop();
  init();
  cell_number();
@@ -255,31 +283,28 @@ void serialEvent (Serial myPort) {
       break;
       case 1:
         cellNumber = int(trim(dataBuffer));
-        if (cellNumber == 0) index = 4;
-        else index++;
+        index++;
       break;
       case 2:
-        if (v_index < (cellNumber-1)) {
-          cellVoltage[v_index] = dataBuffer;
-          v_index++;
-          index = 3;
+        if (s_index < (cellNumber-1)) {
+          cellVoltage[s_index] = dataBuffer;
+          s_index++;
         }
         else {
-          cellVoltage[v_index] = dataBuffer;
+          cellVoltage[s_index] = dataBuffer;
           index++;
-          v_index = 0;
+          s_index = 0;
         }
       break;
       case 3:
-        if (b_index < (cellNumber-1)) {
-          cellBalance[b_index] = dataBuffer;
-          b_index++;
-          index = 2;
+        if (s_index < (cellNumber-1)) {
+          cellBalance[s_index] = dataBuffer;
+          s_index++;
         }
         else {
-          cellBalance[b_index] = dataBuffer;
+          cellBalance[s_index] = dataBuffer;
           index++;
-          b_index = 0;
+          s_index = 0;
         }
       break;
       case 4:
