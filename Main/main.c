@@ -21,11 +21,8 @@
 uint8_t cellNumber;
 uint8_t balanceByte[cellNumber_MAX];
 uint16_t adcReadings[cellNumber_MAX];
-volatile float adcReadingsMean;
-volatile uint16_t adcReadings_I;
-uint8_t charger;
 
-void cellNumber_count(void);
+void cell_numberCount(void);
 void cell_adcReadings(void);
 void cell_balance(void);
 void uart_out(void);
@@ -36,25 +33,28 @@ int main(void)
 {
 	uart_init(UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU));
 	i2c_init();
-	BuckIrt_init()
-	adcBuck_init();
+	buck_init();
+	buckAdc_init();
 	sei();
-
+	//Turn off buck converter
+	DDRB |= (1<<DDB0);
+	PORTB |= (1<<PORTB0);
+	
 	while(1)
 	{
-		cellNumber_count();
+		cell_numberCount();
 		cell_adcReadings();
 		cell_balance();
 		uart_out();
-		
-		BuckIrt(ENABLE);
-		adcBuck(START);
+		mean_readings();
+		if (PINB & (1<<PORTB1)) buck(ENABLE);
+		else buck(DISABLE);
 	}
 	
 	return 0;
 }
 
-void cellNumber_count(void)
+void cell_numberCount(void)
 {
 	cellNumber = 0;
 	//Count connected cells by checking if sending cell address returns 0(acknowledge)
@@ -149,7 +149,7 @@ float adcConvert(uint16_t readings, uint8_t state)
 	float result;
 	//Convert 10bit adc value to voltage, current
 	if (state == cellReading) result = (1.1*1024)/readings;
-	else result = (readings*1024)/5;
+	else result = (readings*5)/(1024*20*0.22);
 	return result;
 }
 
